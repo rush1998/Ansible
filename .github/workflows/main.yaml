@@ -18,4 +18,4 @@ jobs:
         run: ls -la
 
       - name: ping
-        run: ansible all -m ping
+        run: ansible all -i inventory.yaml -m ping
