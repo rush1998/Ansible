@@ -16,3 +16,6 @@ jobs:
 
       - name: list
         run: ls -la
+
+      - name: ping
+        run: ansible all -m ping
