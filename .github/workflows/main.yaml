@@ -1,0 +1,18 @@
+name: Ansible
+
+on:
+  push:
+    branch:
+      - main
+
+jobs:
+  build:
+    runs_on: ubuntu-latest
+
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: list
+        run: ls -la
