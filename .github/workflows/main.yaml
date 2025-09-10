@@ -17,11 +17,5 @@ jobs:
       - name: list
         run: ls -la
 
-      - name: ssh_key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.ANSIBLE_PRIVATE_KEY }}" > ~/.ssh/ansible.pem
-          chmod 600 ~/.ssh/ansible.pem
-
       - name: ping
         run: ansible all -i inventory.yaml -m ping
