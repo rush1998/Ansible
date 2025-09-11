@@ -1,0 +1,67 @@
+---
+- name: Install and run Node Exporter
+  hosts: all
+  become: yes
+
+  vars:
+    node_exporter_url: "https://github.com/prometheus/node_exporter/releases/download/v1.9.1/node_exporter-1.9.1.darwin-amd64.tar.gz"
+    node_exporter_version: "1.9.1"
+    node_exporter_port: "9100"
+    node_exporter_user: "nodeusr"
+    node_exporter_dir: "/opt/node_exporter"
+
+  tasks:
+    - name: Ensure node_exporter user exists
+      ansible.builtin.user:
+        name: "{{ node_exporter_user }}"
+        shell: /sbin/nologin
+
+    - name: Download Node Exporter tarball
+      ansible.builtin.get_url:
+        url: "{{ node_exporter_url }}"
+        dest: "/tmp/node_exporter.tar.gz"
+        mode: '0644'
+
+    - name: Extract Node Exporter
+      ansible.builtin.unarchive:
+        src: "/tmp/node_exporter.tar.gz"
+        dest: "/opt/"
+        remote_src: yes
+
+    - name: Move Node Exporter binary
+      ansible.builtin.copy:
+        src: "/opt/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter"
+        dest: "{{ node_exporter_dir }}/node_exporter"
+        remote_src: yes
+        owner: "{{ node_exporter_user }}"
+        group: "{{ node_exporter_user }}"
+        mode: '0755'
+
+    - name: Create systemd service for Node Exporter
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/node_exporter.service
+        content: |
+          [Unit]
+          Description=Node Exporter
+          After=network.target
+
+          [Service]
+          User={{ node_exporter_user }}
+          ExecStart={{ node_exporter_dir }}/node_exporter --web.listen-address=":{{ node_exporter_port }}"
+          Restart=always
+
+          [Install]
+          WantedBy=default.target
+      notify: Restart node_exporter
+
+    - name: Enable and start Node Exporter
+      ansible.builtin.systemd:
+        name: node_exporter
+        enabled: yes
+        state: started
+
+  handlers:
+    - name: Restart node_exporter
+      ansible.builtin.systemd:
+        name: node_exporter
+        state: restarted
