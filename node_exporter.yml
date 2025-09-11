@@ -4,8 +4,8 @@
   become: yes
 
   vars:
-    node_exporter_url: "https://github.com/prometheus/node_exporter/releases/download/v1.9.1/node_exporter-1.9.1.darwin-amd64.tar.gz"
     node_exporter_version: "1.9.1"
+    node_exporter_url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
     node_exporter_port: "9100"
     node_exporter_user: "nodeusr"
     node_exporter_dir: "/opt/node_exporter"
@@ -51,7 +51,7 @@
           Restart=always
 
           [Install]
-          WantedBy=default.target
+          WantedBy=multi-user.target
       notify: Restart node_exporter
 
     - name: Enable and start Node Exporter
