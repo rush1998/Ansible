@@ -29,6 +29,13 @@
         remote_src: yes
         creates: "{{ node_exporter_dir }}/node_exporter"
 
+    - name: Ensure Node Exporter binary is executable
+      ansible.builtin.file:
+        path: "{{ node_exporter_dir }}/node_exporter"
+        owner: "{{ node_exporter_user }}"
+        group: "{{ node_exporter_user }}"
+        mode: '0755'
+
     - name: Create systemd service for Node Exporter
       ansible.builtin.copy:
         dest: /etc/systemd/system/node_exporter.service
