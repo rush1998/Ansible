@@ -28,6 +28,14 @@
         dest: "/opt/"
         remote_src: yes
         creates: "{{ node_exporter_dir }}/node_exporter"
+      register: extract_result
+
+    - name: Move extracted files to target directory (if needed)
+      ansible.builtin.command:
+        cmd: mv /opt/node_exporter-{{ node_exporter_version }}.linux-amd64 "{{ node_exporter_dir }}"
+      when: extract_result.changed and (ansible_facts['distribution'] != 'Amazon')
+      args:
+        creates: "{{ node_exporter_dir }}/node_exporter"
 
     - name: Ensure Node Exporter binary is executable
       ansible.builtin.file:
