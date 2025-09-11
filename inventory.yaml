@@ -1,13 +1,13 @@
 all:
   hosts:
     web01:
-      ansible_host: 3.90.240.150
+      ansible_host: 54.81.172.192
     web02:
-      ansible_host: 13.221.37.249
+      ansible_host: 18.232.89.0
     web03:
-      ansible_host: 3.89.204.207
+      ansible_host: 54.87.50.121
     web04:
-      ansible_host: 52.90.204.124
+      ansible_host: 54.208.43.42
 
   children:
     webservers:
