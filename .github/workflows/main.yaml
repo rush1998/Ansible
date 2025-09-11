@@ -25,3 +25,6 @@ jobs:
 
       - name: ping
         run: ansible all -i inventory.yaml -m ping
+
+      - name: Run Node Exporter playbook
+        run: ansible-playbook -i inventory.yaml node_exporter.yml
