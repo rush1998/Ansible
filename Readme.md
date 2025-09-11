@@ -43,6 +43,24 @@ Confirming if the Workflow runs while push or not
 
 ## Ansible Playbooks
 
+Modifying the prometheus.yml file to scrape the web instance 
+
+```
+ - job_name: "ec2_hosts"
+    static_configs:
+      - targets:
+          - "54.81.172.192:9100"
+          - "18.232.89.0:9100"
+        labels:
+          role: "web"
+
+      - targets:
+          - "54.87.50.121:9100"
+          - "54.208.43.42:9100"
+        labels:
+          role: "db"
+```
+
 Create playbook for installing the node exporter to scrape all the instance
 
 ```
@@ -141,15 +159,15 @@ Create playbook for installing the node exporter to scrape all the instance
 
 ## Reporting Dashboard
 
-I have my promethous and graphana running on my local Docker desktop 
+I have my promethous and graphana running on my local Docker desktop
 
 ![1757574674214](image/Readme/1757574674214.png)
 
-Promethous having the scrape target as my web instances 
+Promethous having the scrape target as my web instances
 
 ![1757574709049](image/Readme/1757574709049.png)
 
-The below image shows how the promethous scrapes the web instances 
+The below image shows how the promethous scrapes the web instances
 
 ![1757574435883](image/Readme/1757574435883.png)
 
