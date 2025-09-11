@@ -8,7 +8,7 @@
     node_exporter_url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
     node_exporter_port: "9100"
     node_exporter_user: "nodeusr"
-    node_exporter_dir: "/opt/node_exporter"
+    node_exporter_dir: "/opt/node_exporter-{{ node_exporter_version }}.linux-amd64"
 
   tasks:
     - name: Ensure node_exporter user exists
@@ -27,16 +27,7 @@
         src: "/tmp/node_exporter.tar.gz"
         dest: "/opt/"
         remote_src: yes
-        creates: "/opt/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter"
-
-    - name: Move Node Exporter binary
-      ansible.builtin.copy:
-        src: "/opt/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter"
-        dest: "{{ node_exporter_dir }}/node_exporter"
-        remote_src: yes
-        owner: "{{ node_exporter_user }}"
-        group: "{{ node_exporter_user }}"
-        mode: '0755'
+        creates: "{{ node_exporter_dir }}/node_exporter"
 
     - name: Create systemd service for Node Exporter
       ansible.builtin.copy:
