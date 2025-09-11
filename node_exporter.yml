@@ -27,6 +27,7 @@
         src: "/tmp/node_exporter.tar.gz"
         dest: "/opt/"
         remote_src: yes
+        creates: "/opt/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter"
 
     - name: Move Node Exporter binary
       ansible.builtin.copy:
