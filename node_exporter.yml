@@ -16,6 +16,16 @@
         name: "{{ node_exporter_user }}"
         shell: /sbin/nologin
 
+    - name: Remove previous Node Exporter tarball if exists
+      ansible.builtin.file:
+        path: "/tmp/node_exporter.tar.gz"
+        state: absent
+
+    - name: Remove previous Node Exporter directory if exists
+      ansible.builtin.file:
+        path: "/opt/node_exporter"
+        state: absent
+
     - name: Download Node Exporter tarball
       ansible.builtin.get_url:
         url: "{{ node_exporter_url }}"
@@ -28,16 +38,8 @@
         dest: "/opt/"
         remote_src: yes
         creates: "{{ node_exporter_dir }}/node_exporter"
-      register: extract_result
 
-    - name: Move extracted files to target directory (if needed)
-      ansible.builtin.command:
-        cmd: mv /opt/node_exporter-{{ node_exporter_version }}.linux-amd64 "{{ node_exporter_dir }}"
-      when: extract_result.changed and (ansible_facts['distribution'] != 'Amazon')
-      args:
-        creates: "{{ node_exporter_dir }}/node_exporter"
-
-    - name: Ensure Node Exporter binary is executable
+    - name: Ensure Node Exporter binary is executable 
       ansible.builtin.file:
         path: "{{ node_exporter_dir }}/node_exporter"
         owner: "{{ node_exporter_user }}"
@@ -59,7 +61,9 @@
 
           [Install]
           WantedBy=multi-user.target
-      notify: Restart node_exporter
+      notify:
+        - Reload systemd
+        - Restart node_exporter
 
     - name: Enable and start Node Exporter
       ansible.builtin.systemd:
@@ -75,6 +79,10 @@
 
 
   handlers:
+    - name: Reload systemd
+      ansible.builtin.command:
+        cmd: systemctl daemon-reload
+
     - name: Restart node_exporter
       ansible.builtin.systemd:
         name: node_exporter
